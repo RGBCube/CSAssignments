@@ -1,0 +1,23 @@
+1. Read in 21 user ratings for a movie.
+Each rating is a number from 1 to 5 stars.
+Store the ratings in an array.
+
+2. Calculate the average rating. Print this
+to the screen rounded to 1 decimal point, e.g.
+4.1 stars.
+
+3. Create a new array called ‘rating_frequency’
+that stores the number of ratings for
+each star, e.g. 3 one-star ratings, 5
+two-star ratings, etc.
+
+4. Display the ratings' frequency to the screen,
+where an asterisk (* symbol) is printed out for
+the number of movie ratings of that star
+number. See screenshot.
+
+5. Create a new array ‘rating_percent’ that
+contains the percentage of ratings for each
+star, e.g. 14.3% one star, 23.8% two star, etc.
+Display this to the screen in a similar manner
+to task 4.
