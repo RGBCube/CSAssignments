@@ -1,0 +1,280 @@
+#!/usr/bin/python3
+from __future__ import annotations
+
+from functools import cached_property
+from os import name as os_name, system as cmd
+from pathlib import Path
+from typing import TypeVar
+
+from chalky import hex, sty
+
+T = TypeVar("T")
+ROOT = Path(__file__).parent
+is_windows = os_name == "nt"
+
+
+class Sources:
+    def __init__(self) -> None:
+        self.__sources_dir = (ROOT / "src")
+
+    @cached_property
+    def languages(self) -> dict[str, Language]:
+        languages = {}
+
+        i = 0
+        for ldr in self.__sources_dir.iterdir():
+            if ldr.is_dir():
+                i += 1
+                language = Language(ldr)
+                languages[language.name] = language
+                languages[str(i)] = language
+
+        return languages
+
+
+class Language:
+    def __init__(self, path: Path) -> None:
+        self.__path = path
+
+    @cached_property
+    def name(self) -> str:
+        return self.__path.name
+
+    @cached_property
+    def colored_name(self) -> str:
+        return hex((self.__path / "FGCOLOR").read_text()) & \
+               hex((self.__path / "BGCOLOR").read_text(), background=True) \
+               | self.__path.name
+
+    @cached_property
+    def description(self) -> str:
+        return (self.__path / "DESCRIPTION").read_text()
+
+    @cached_property
+    def is_compiled(self) -> bool:
+        return (self.__path / "COMPILECMD").exists()
+
+    @cached_property
+    def compile_command(self) -> str:
+        """For compiled languages. Format with `main` and `out`"""
+        return (self.__path / "COMPILECMD").read_text().strip() if self.is_compiled else None
+
+    @cached_property
+    def run_command(self) -> str:
+        """For interpreted languages. Format with `main`"""
+        return (self.__path / "RUNCMD").read_text().strip()
+
+    @cached_property
+    def assignments(self) -> dict[str, Assignment]:
+        assignments = {}
+
+        i = 0
+        for adr in self.__path.iterdir():
+            if adr.is_dir():
+                i += 1
+                assignment = Assignment(adr, self)
+                assignments[assignment.name] = assignment
+                assignments[str(i)] = assignment
+
+        return assignments
+
+
+class Assignment:
+    def __init__(self, path: Path, language: Language) -> None:
+        self.__path = path
+        self.language = language
+
+    @cached_property
+    def name(self) -> str:
+        return self.__path.name.split(":", 1)[0]
+
+    @cached_property
+    def date(self) -> str:
+        return self.__path.name.split(":", 1)[1]
+
+    @cached_property
+    def description(self) -> str:
+        return (self.__path / "DESCRIPTION").read_text()
+
+    @cached_property
+    def directions(self) -> str:
+        return (self.__path / "ASSIGNMENT").read_text()
+
+    @cached_property
+    def main_file(self) -> Path:
+        return self.__path / (self.__path / "MAIN").read_text()
+
+    @cached_property
+    def compiled_file(self) -> Path:
+        return ROOT / "compiled" / (self.name + (".exe" if is_windows else ""))
+
+    def compile(self, *, show: bool) -> bool:
+        """Returns True if compilation was successful, False otherwise."""
+        if self.compiled_file.exists():
+            self.compiled_file.unlink()
+        return cmd(
+            self.language.compile_command.format(main=self.main_file, out=self.compiled_file)
+            + "" if show else (" > NUL" if is_windows else " > /dev/null")
+            ) == 0
+
+    def run(self) -> None:
+        if self.language.is_compiled:
+            if not self.compiled_file.exists():
+                self.compile(show=False)
+            cmd(self.compiled_file.absolute())
+        else:
+            cmd(self.language.run_command.format(main=self.main_file.absolute()))
+
+
+src = Sources()
+
+red = hex("ff0000")
+green = hex("39ff14")
+cyan = hex("4bf0fc")
+purple = hex("b026ff")
+orange = hex("ff760d")
+
+invalid_choice = red | "Invalid choice! Try again."
+exiting = red | "Exiting..."
+
+
+def nl() -> None:
+    print()
+
+
+_nl = nl
+
+
+def do_exit(s: str, /) -> str:
+    if s == "exit":
+        print(exiting)
+        exit()
+    return s
+
+
+def nprnt(*s, nl: bool = False) -> None:
+    print(*s)
+    if nl:
+        _nl()
+
+
+def scan(prompt: str, /, *, nl: bool = False) -> str:
+    s = input(prompt).lower().strip()
+    if nl:
+        _nl()
+    return do_exit(s)
+
+
+def yesno(prompt: str, /, *, nl: bool = False) -> bool:
+    s = input(prompt).lower().strip()
+    if s in {"y", "yes"}:
+        return True
+    elif s in {"n", "no"}:
+        return False
+    else:
+        print(invalid_choice)
+        return yesno(prompt, nl=nl)
+
+
+def iter_int_keys(d: dict[str, T]) -> list[tuple[int, T]]:
+    for k, v in d.items():
+        if k.isdigit():
+            yield int(k), v
+
+
+def get_ignorecase(d: dict[str, T], k: str) -> T:
+    for key, value in d.items():
+        # k is always lowercase
+        if key.lower() == k:
+            return value
+    raise KeyError(k)
+
+
+while True:
+    # TODO align columns
+    print("----------", green & sty.bold | "LANGUAGES", "----------")
+
+    for i, language in iter_int_keys(src.languages):
+        print((green | i) + f": {language.colored_name} - {language.description}")
+    nl()
+
+    choice = scan("Choose a language by its number or name (exit to exit): ", nl=True)
+
+    language = get_ignorecase(src.languages, choice)
+
+    if language is None:
+        nprnt(invalid_choice, nl=True)
+        continue
+
+    while True:
+        # TODO align columns
+        print("----------", cyan & sty.bold | language.name.upper(), "----------")
+
+        for i, assignment in iter_int_keys(language.assignments):
+            print(
+                (cyan | i) + f": {assignment.name} ({assignment.date}) - {assignment.description}"
+                )
+        nl()
+
+        choice = scan(
+            "Choose an assignment by its number or name (back to go back, exit to exit): ",
+            nl=True
+            )
+
+        if choice == "back":
+            break
+
+        assignment = get_ignorecase(language.assignments, choice)
+
+        if assignment is None:
+            nprnt(invalid_choice, nl=True)
+            continue
+
+        while True:
+            print("----------", purple & sty.bold | assignment.name.upper(), "----------")
+            print((purple | 1) + ": Show directions")
+            if language.is_compiled:
+                print((purple | 2) + ": Compile (uses cache if exists) & run")
+                print((purple | 3) + ": Compile manually")
+            else:
+                print((purple | 2) + ": Run")
+            nl()
+
+            choice = scan(
+                "Choose an option by its number (back to go back, exit to exit): ",
+                nl=True
+                )
+
+            match choice:
+                case "back":
+                    break
+
+                case "1":
+                    print(
+                        "----------",
+                        orange & sty.bold | f"DIRECTIONS FOR {assignment.name.upper()}",
+                        "----------"
+                        )
+                    nprnt(assignment.directions, nl=True)
+
+                case "2":
+                    nprnt("----------", orange | "RUN OUTPUT", "----------", nl=True)
+                    assignment.run()
+                    nl()
+
+                case "3":
+                    if not language.is_compiled:
+                        nprnt(invalid_choice, nl=True)
+                        continue
+
+                    ask = yesno("Show compile output if exists? (y/n): ", nl=True)
+                    print(orange | "Compiling...")
+                    success = assignment.compile(show=ask)
+                    if success:
+                        s = green | "Compiled successfully!"
+                    else:
+                        s = red | "Compilation failed!"
+                    nprnt(s, nl=True)
+
+                case _:
+                    nprnt(invalid_choice, nl=True)

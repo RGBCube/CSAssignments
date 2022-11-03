@@ -38,3 +38,4 @@ run/
 *.iml
 *.ipr
 *.iws
+compiled/
