@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 from __future__ import annotations
 
-import tomllib
+from tomllib import loads as decode_toml
 from dataclasses import dataclass
 from functools import cached_property
 from os import name as os_name, system as cmd
@@ -29,7 +29,7 @@ class Sources:
             if not language_dir.is_dir():
                 continue
 
-            language_metadata = tomllib.loads((language_dir / "language.toml").read_text())
+            language_metadata = decode_toml((language_dir / "language.toml").read_text())
             language_metadata["directory"] = language_dir
 
             language = Language.from_raw(language_metadata)
@@ -50,6 +50,7 @@ class Language:
         self,
         *,
         directory: Path,
+
         name: str,
         description: str,
         colors: Colors,
@@ -89,7 +90,7 @@ class Language:
             if not assignment_dir.is_dir():
                 continue
 
-            assignment_metadata = tomllib.loads((assignment_dir / "assignment.toml").read_text())
+            assignment_metadata = decode_toml((assignment_dir / "assignment.toml").read_text())
             assignment_metadata["directory"] = assignment_dir
             assignment_metadata["language"] = self
 
@@ -102,6 +103,7 @@ class Assignment:
         *,
         language: Language,
         directory: Path,
+
         name: str,
         date: str,
         description: str,
