@@ -1,8 +1,8 @@
 # CSAssignments
 
-CS assignments from school, may or may not include assignments from other people
+CS assignments from school, may or may not include assignments from other people.
 
-# Running
+## Downloading
 
 Firstly, you need to clone this repo to your machine:
 
@@ -12,15 +12,17 @@ cd CSAssignments
 ```
 
 OK, now you have the code on your machine. You can use the interactive code runner script to run the
-code:
+code
 
-Linux:
+## Running
+
+## Linux
 
 ```bash
 ./run
 ```
 
-Windows:
+## Windows
 
 ```bat
 run.bat
