@@ -1,0 +1,16 @@
+name = "C"
+description = "C (pronounced like the letter c) is a general-purpose computer programming language"
+
+[colors]
+foreground = 0x000000
+background = 0x00599d
+
+[build]
+common = "gcc -o {out-file} {main-file}"
+
+[run]
+linux = "./{out-file}"
+windows = "{out-file}"
+
+[dependencies]
+common = ["gcc"]

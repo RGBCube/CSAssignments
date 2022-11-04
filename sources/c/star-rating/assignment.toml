@@ -1,3 +1,7 @@
+name = "star-rating"
+given-date = "30/10/2022"
+description = "A program that takes 21 reviews and calculates the average rating and prints some stars"
+directions = """
 1. Read in 21 user ratings for a movie.
 Each rating is a number from 1 to 5 stars.
 Store the ratings in an array.
@@ -21,3 +25,7 @@ contains the percentage of ratings for each
 star, e.g. 14.3% one star, 23.8% two star, etc.
 Display this to the screen in a similar manner
 to task 4.
+"""
+
+[compile]
+main-file = "star_rating.c"

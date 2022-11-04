@@ -1,0 +1,14 @@
+name = "CPython"
+description = "Python is a high-level, general-purpose programming language"
+
+[colors]
+foreground = 0xfed140
+background = 0x3670a0
+
+[run]
+linux = "python3 {main-file}"
+windows = "py {main-file}"
+
+[dependencies]
+linux = ["python3"]
+windows = ["py"]
