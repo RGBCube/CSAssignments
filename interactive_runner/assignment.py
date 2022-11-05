@@ -3,9 +3,10 @@ from __future__ import annotations
 __all__ = ("Assignment",)
 
 from functools import cached_property
-from .helpers import command
 from tomllib import loads as decode_toml
 from typing import TYPE_CHECKING, TypedDict
+
+from .helpers import command
 
 if TYPE_CHECKING:
     from pathlib import Path
