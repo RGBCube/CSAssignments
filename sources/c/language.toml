@@ -1,15 +1,15 @@
 name = "C"
 description = "C (pronounced like the letter c) is a general-purpose computer programming language"
 
-[colors]
-foreground = "ffffff"
-background = "00599d"
+[color]
+foreground = 0xffffff
+background = 0x00599d
 
 [build]
-common = "gcc -o {out-file} {main-file}"
+common = "gcc -o {out} {main}"
 
 [run]
 common = "{}"
 
-[dependencies]
-common = ["gcc"]
+[dependency]
+common = [ "gcc" ]

@@ -3,71 +3,65 @@ from __future__ import annotations
 __all__ = ("Language",)
 
 from functools import cached_property
-from os import system as cmd
 from tomllib import loads as decode_toml
 from typing import TYPE_CHECKING, TypedDict
 
-from chalky import hex
-
 from .assignment import Assignment
-from .consts import CHECK_COMMAND_EXISTS, OS_KEY
+from .constants import OS
+from .helpers import chalk_from_int, command_exists
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-LanguageConfig = TypedDict(
-    "LanguageConfig",
-    {
-        "name": str,
-        "descripton": str,
-        "colors": TypedDict(
-            "ColorConfig",
-            {
-                "foregroud": int,
-                "background": int,
-            }
-        ),
-        "build": None | TypedDict(
-            "BuildConfig",
-            {
-                "common": str | None,
-                "unix": str | None,
-                "windows": str | None,
-            }
-        ),
-        "run": TypedDict(
-            "RunConfig",
-            {
-                "common": str | None,
-                "unix": str | None,
-                "windows": str | None,
-            }
-        ),
-        "dependencies": None | TypedDict(
-            "DependencyConfig",
-            {
-                "common": list[str] | None,
-                "unix": list[str] | None,
-                "windows": list[str] | None,
-            }
-        ),
-    }
-)
+
+class DependencyConfig(TypedDict):
+    """The list of commands that it needs."""
+    common: list[str] | None
+    unix: list[str] | None
+    windows: list[str] | None
+
+
+class RunConfig(TypedDict):
+    """command.format(main_file)"""
+    common: str | None
+    unix: str | None
+    windows: str | None
+
+
+class BuildConfig(TypedDict):
+    """command.format(out=out_file, main=main_file)"""
+    common: str | None
+    unix: str | None
+    windows: str | None
+
+
+class ColorConfig(TypedDict):
+    foreground: int
+    background: int
+
+
+class LanguageConfig(TypedDict):
+    name: str
+    description: str
+    color: ColorConfig
+    build: BuildConfig | None
+    run: RunConfig
+    dependency: DependencyConfig | None
 
 
 class Language:
     __directory: Path
     __config: LanguageConfig
+    __dependencies: list[str] | None
+    _build_command: str | None
+    _run_command: str
     name: str
     styled_name: str
     description: str
-    __dependencies: list[str] | None
-    _build_command: str | None
     is_compiled: bool
-    _run_command: str
     assignments: dict[str, Assignment]
 
-    def __init__(self, directory: Path) -> None:
+    def __init__(self, directory: Path, /) -> None:
         self.__directory = directory
 
     @cached_property
@@ -75,8 +69,7 @@ class Language:
         return decode_toml((self.__directory / "language.toml").read_text())
 
     def refresh(self) -> None:
-        del self.__config
-        del self.assignments
+        """TODO"""
 
     @property
     def name(self) -> str:
@@ -84,9 +77,8 @@ class Language:
 
     @property
     def styled_name(self) -> str:
-        colors = self.__config["colors"]
-        # hack
-        return hex(colors["foreground"]) & hex(colors["background"], background=True) | self.name
+        color = self.__config["color"]
+        return chalk_from_int(color["foreground"], color["background"]) | self.name
 
     @property
     def description(self) -> str:
@@ -94,26 +86,20 @@ class Language:
 
     @property
     def __dependencies(self) -> list[str] | None:
-        dependencies = self.__config.get("dependencies", {})
-        return dependencies.get("common", dependencies.get(OS_KEY))
+        dependency = self.__config.get("dependency", {})
+        return dependency.get("common") or dependency[OS]
 
-    def check_dependencies_installed(self) -> list[str]:
+    def check_if_dependencies_are_installed(self) -> list[str]:
+        """Return value is the not installed dependencies"""
         if self.__dependencies is None:
             return []
 
-        not_installed = []
-        for dependency in self.__dependencies:
-            exit = cmd(CHECK_COMMAND_EXISTS.format(dependency))
-
-            if exit:
-                not_installed.append(dependency)
-
-        return not_installed
+        return [d for d in self.__dependencies if not command_exists(d)]
 
     @property
     def _build_command(self) -> str | None:
         build = self.__config.get("build", {})
-        return build.get("common", build.get(OS_KEY))
+        return build.get("common") or build.get(OS)
 
     @property
     def is_compiled(self) -> bool:
@@ -122,7 +108,7 @@ class Language:
     @property
     def _run_command(self) -> str:
         run = self.__config["run"]
-        return run.get("common", run.get(OS_KEY))
+        return run.get("common") or run[OS]
 
     @cached_property
     def assignments(self) -> dict[str, Assignment]:

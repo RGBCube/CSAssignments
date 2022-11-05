@@ -1,6 +1,6 @@
 name = "example"
-given-date = "3/11/2022"
-main-file = "example.py"
+date = "3/11/2022"
+main = "example.py"
 description = "This is an example entry for CPython"
 directions = """
 Print "Example" 10 times.

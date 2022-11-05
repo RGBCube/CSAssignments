@@ -5,7 +5,7 @@ __all__ = ("Sources",)
 from functools import cached_property
 from typing import TYPE_CHECKING
 
-from .consts import ROOT
+from .constants import ROOT
 from .language import Language
 
 if TYPE_CHECKING:
@@ -32,4 +32,4 @@ class Sources:
         return languages
 
     def refresh(self) -> None:
-        del self.languages
+        """TODO"""

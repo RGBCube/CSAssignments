@@ -2,13 +2,13 @@ name = "CPython"
 description = "Python is a high-level, general-purpose programming language"
 
 [colors]
-foreground = "fed140"
-background = "3670a0"
+foreground = 0xfed140
+background = 0x3670a0
 
 [run]
 unix = "python3 {}"
 windows = "py {}"
 
 [dependencies]
-unix = ["python3"]
-windows = ["py"]
+unix = [ "python3" ]
+windows = [ "py" ]
