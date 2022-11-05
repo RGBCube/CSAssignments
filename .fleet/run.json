@@ -1,9 +1,0 @@
-{
-  "configurations": [
-    {
-      "type": "python",
-      "name": "Run Interactive Runner",
-      "arguments": ["-m", "interactive_runner"],
-    }
-  ]
-}
