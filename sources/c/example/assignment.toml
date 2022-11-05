@@ -1,9 +1,8 @@
-name = "example"
+name = "Example"
 given-date = "3/11/2022"
+main-file = "example.c"
 description = "This is an example entry for C"
 directions = """
 Print "Example" 10 times.
 """
 
-[compile]
-main-file = "example.c"

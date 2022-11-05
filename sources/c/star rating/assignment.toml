@@ -1,5 +1,6 @@
-name = "star-rating"
+name = "Star Rating"
 given-date = "30/10/2022"
+main-file = "star_rating.c"
 description = "A program that takes 21 reviews and calculates the average rating and prints some stars"
 directions = """
 1. Read in 21 user ratings for a movie.
@@ -26,6 +27,3 @@ star, e.g. 14.3% one star, 23.8% two star, etc.
 Display this to the screen in a similar manner
 to task 4.
 """
-
-[compile]
-main-file = "star_rating.c"

@@ -11,15 +11,15 @@ git clone https://github.com/RGBCube/CSAssignments
 cd CSAssignments
 ```
 
-OK, now you have the code on your machine. You can use the interactive code runner script to run the
-code
+Now you have the code on your machine. You can use the interactive code runner script to run the
+code.
 
 ## Running
 
 ## Linux
 
 ```bash
-./run
+./run.sh
 ```
 
 ## Windows
