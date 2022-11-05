@@ -2,13 +2,15 @@ from __future__ import annotations
 
 __all__ = ("Sources",)
 
-from .language import Language
-from .consts import ROOT
 from functools import cached_property
 from typing import TYPE_CHECKING
 
+from .consts import ROOT
+from .language import Language
+
 if TYPE_CHECKING:
     from pathlib import Path
+
 
 class Sources:
     __directory: Path

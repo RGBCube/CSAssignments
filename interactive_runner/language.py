@@ -2,14 +2,15 @@ from __future__ import annotations
 
 __all__ = ("Language",)
 
-from .assignment import Assignment
-from .consts import OS_KEY, CHECK_COMMAND_EXISTS
-from typing import TYPE_CHECKING, TypedDict
-from tomllib import loads as decode_toml
-from chalky import hex
 from functools import cached_property
 from os import system as cmd
-from chalky.shortcuts.sty import bold
+from tomllib import loads as decode_toml
+from typing import TYPE_CHECKING, TypedDict
+
+from chalky import hex
+
+from .assignment import Assignment
+from .consts import CHECK_COMMAND_EXISTS, OS_KEY
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -52,6 +53,7 @@ LanguageConfig = TypedDict(
         ),
     }
 )
+
 
 class Language:
     __directory: Path

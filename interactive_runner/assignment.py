@@ -3,9 +3,9 @@ from __future__ import annotations
 __all__ = ("Assignment",)
 
 from functools import cached_property
-from typing import TypedDict, TYPE_CHECKING
-from tomllib import loads as decode_toml
 from os import system as cmd
+from tomllib import loads as decode_toml
+from typing import TYPE_CHECKING, TypedDict
 
 if TYPE_CHECKING:
     from .language import Language
@@ -20,6 +20,7 @@ AssignmentConfig = TypedDict(
         "directions": str,
     }
 )
+
 
 class Assignment:
     __config: AssignmentConfig
@@ -68,18 +69,23 @@ class Assignment:
         if not self.language.is_compiled:
             return None
 
-        return cmd(self.language._build_command.format(
-    **{
-    "out-file": self.__directory / "compiled.out",
-    "main-file": self.__main_file.absolute(),
-    }
-    ) +
-    (QUIET_SUFFIX if quiet else "")
-    )
+        return cmd(
+            self.language._build_command.format(
+                **{
+                    "out-file": self.__directory / "compiled.out",
+                    "main-file": self.__main_file.absolute(),
+                }
+            ) +
+            (QUIET_SUFFIX if quiet else "")
+            )
 
     def run(self) -> int:
         if self.language.is_compiled and not (self.__directory / "compiled.out").exists():
             self.compile(quiet=True)
 
-        return cmd(self.language._run_command.format((self.__directory / "compiled.out").absolute() if self.language.is_compiled else self.__main_file.absolute()))
-
+        return cmd(
+            self.language._run_command.format(
+                (
+                        self.__directory / "compiled.out").absolute() if self.language.is_compiled else self.__main_file.absolute()
+                )
+            )
