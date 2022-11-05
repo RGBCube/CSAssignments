@@ -31,5 +31,5 @@ You can download it from [here](https://www.python.org/downloads/).
 ### Windows
 
 ```bat
-run.bat
+.\run.bat
 ```

@@ -21,7 +21,7 @@ def __rgb_from_int(i: int, /) -> tuple[int, int, int]:
 def chalk_from_int(foreground: int, background: int = None, /) -> Chalk:
     return Chalk(
         foreground=TrueColor(*__rgb_from_int(foreground)),
-        background=TrueColor(*__rgb_from_int(background))
+        background=TrueColor(*__rgb_from_int(background)) if background else None
     )
 
 

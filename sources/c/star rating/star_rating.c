@@ -8,7 +8,7 @@ int main() {
 
     for (int i = 0; i < 21; i++) {
         printf("Review number %i, enter rating (1 to 5): ", i+1);
-        // read the input as int
+        // Read the input as int.
         scanf("%i", &ratings[i]);
 
         int rating = ratings[i];
@@ -18,7 +18,7 @@ int main() {
             return 1;
         }
 
-        // increment the star count for the stars
+        // Increment the star count for the stars.
         // (-1 is because indexes start from 0)
         ++rating_frequency[rating-1];
         total_stars += rating;
