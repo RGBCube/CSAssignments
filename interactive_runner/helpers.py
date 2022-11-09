@@ -1,13 +1,15 @@
 __all__ = ("command", "chalk_from_int", "command_exists")
 
-from subprocess import DEVNULL as NULL, call as sys_command
+from subprocess import DEVNULL as NULL, call as sys_command, getstatusoutput as sys_get_out_err
 
 from chalky import Chalk, TrueColor
+
+from .constants import OS
 
 
 def command(s: str, /, *, quiet: bool) -> int:
     return sys_command(
-        s.split(" "), **(dict(stdout=NULL, stderr=NULL, stdin=NULL) if quiet else {})
+        s.split(" "), shell=True, **(dict(stdout=NULL, stderr=NULL, stdin=NULL) if quiet else {})
     )
 
 
@@ -26,5 +28,5 @@ def chalk_from_int(foreground: int, background: int = None, /) -> Chalk:
 
 
 def command_exists(s: str, /) -> bool:
-    """TODO"""
-    return False
+    prefix = "Get-Command" if OS == "windows" else "command -v"
+    return sys_get_out_err(f"{prefix} {s}")[0] == 0

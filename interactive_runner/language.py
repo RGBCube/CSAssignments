@@ -3,8 +3,9 @@ from __future__ import annotations
 __all__ = ("Language",)
 
 from functools import cached_property
-from toml import loads as decode_toml
 from typing import TYPE_CHECKING, TypedDict
+
+from toml import loads as decode_toml
 
 from .assignment import Assignment
 from .constants import OS
