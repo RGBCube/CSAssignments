@@ -1,6 +1,6 @@
 name = "Example"
-given-date = "3/11/2022"
-main-file = "example.c"
+date = "3/11/2022"
+main = "example.c"
 description = "This is an example entry for C"
 directions = """
 Print "Example" 10 times.
