@@ -18,7 +18,7 @@ code.
 
 ### Prerequisites
 
-You need at least CPython 3.11 to run the interactive code runner script.
+You need *at least* CPython 3.10 to run the interactive code runner script.
 
 You can download it from [here](https://www.python.org/downloads/).
 

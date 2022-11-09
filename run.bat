@@ -1,2 +1,2 @@
-py -m pip install -U chalky > NUL
+py -m pip install -U chalky toml > NUL
 py -m interactive_runner

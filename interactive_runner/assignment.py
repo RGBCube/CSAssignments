@@ -3,7 +3,7 @@ from __future__ import annotations
 __all__ = ("Assignment",)
 
 from functools import cached_property
-from tomllib import loads as decode_toml
+from toml import loads as decode_toml
 from typing import TYPE_CHECKING, TypedDict
 
 from .helpers import command
