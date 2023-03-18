@@ -1,4 +1,4 @@
-# cs-assignments
+# CSAssignments
 
 CS assignments from school, may or may not include assignments from other people.
 
@@ -7,8 +7,8 @@ CS assignments from school, may or may not include assignments from other people
 Firstly, you need to clone this repo to your machine:
 
 ```bash
-git clone https://github.com/RGBCube/cs-assignments
-cd cs-assignments
+git clone https://github.com/RGBCube/CSAssignments
+cd CSAssignments
 ```
 
 Now you have the code on your machine. You can use the interactive code runner script to run the
